@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}EcoShare - Request Item #{{ item.item_id }}{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto bg-white p-8 rounded-3xl border border-slate-200 shadow-md">
+    <div class="mb-6">
+        <span class="text-xs font-bold text-brand-600 uppercase tracking-wider">Transaction Initiation</span>
+        <h1 class="text-2xl font-black text-slate-900 mt-1">Initiate Exchange Request</h1>
+        <p class="text-xs text-slate-500 mt-1">Links receiver to provider and encapsulates transaction lifecycle.</p>
+    </div>
+
+    <!-- Summary of target item -->
+    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 mb-6 flex gap-4 items-center">
+        <div class="w-12 h-12 rounded-xl bg-brand-100 text-brand-800 flex items-center justify-center text-2xl font-bold">
+            {% if item.get_listing_type() == 'DONATION' %}🎁{% elif item.get_listing_type() == 'RENTAL' %}🔧{% else %}♻️{% endif %}
+        </div>
+        <div>
+            <h3 class="font-bold text-slate-900 text-sm">{{ item.title }}</h3>
+            <p class="text-xs text-slate-500">{{ item.category }} • Listed by <strong>{{ item.owner.username }}</strong></p>
+        </div>
+    </div>
+
+    <form action="/request-item/{{ item.item_id }}" method="POST" class="space-y-6">
+        <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Select Your Profile (Receiver / Requester)</label>
+            <select name="receiver_id" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-brand-500">
+                {% for u in users %}
+                {% if u.user_id != item.owner.user_id %}
+                <option value="{{ u.user_id }}">{{ u.username }} ({{ u.role }}) — Score: {{ u.eco_score }}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+
+        {% if item.get_listing_type() == 'RENTAL' %}
+        <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Rental Duration (Days)</label>
+            <input type="number" name="rental_days" min="1" max="{{ item.max_duration_days }}" value="2" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2 text-sm">
+            <p class="text-[11px] text-slate-500 mt-1">Daily rate: ₹{{ item.rental_fee_per_day }} • Max allowed: {{ item.max_duration_days }} days</p>
+        </div>
+        {% elif item.get_listing_type() == 'RECYCLABLE' %}
+        <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Pickup Notes / Depot Slot</label>
+            <input type="text" name="pickup_notes" placeholder="e.g. Will collect from Hostel Block B collection dock at 4 PM" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2 text-sm">
+        </div>
+        {% endif %}
+
+        <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800">
+            <strong>Impact Benefit:</strong> Upon completion, this exchange will award eco-score points to both parties and prevent landfill waste.
+        </div>
+
+        <button type="submit" class="w-full bg-slate-900 hover:bg-brand-600 text-white font-bold py-3.5 rounded-2xl shadow-md transition-all text-sm">
+            Confirm & Send Request
+        </button>
+    </form>
+</div>
+{% endblock %}

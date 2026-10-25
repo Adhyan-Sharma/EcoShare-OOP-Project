@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %}EcoShare - List a New Resource{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white p-8 rounded-3xl border border-slate-200 shadow-md">
+    <div class="mb-6">
+        <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">OOP Factory Pattern</span>
+        <h1 class="text-2xl font-black text-slate-900 mt-1">List a Resource or Scrap Waste</h1>
+        <p class="text-xs text-slate-500 mt-1">Our backend uses an <code class="bg-slate-100 text-slate-800 px-1 py-0.5 rounded">ItemFactory</code> to instantiate the appropriate concrete subclass based on the selected type.</p>
+    </div>
+
+    <form action="/list-item" method="POST" class="space-y-6">
+        <!-- Listing Type Switcher -->
+        <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Resource Type (Subclass)</label>
+            <div class="grid grid-cols-3 gap-3">
+                <label class="cursor-pointer border-2 rounded-2xl p-4 text-center transition-all peer-checked:border-emerald-600 peer-checked:bg-emerald-50 hover:border-slate-300" id="label-DONATION">
+                    <input type="radio" name="item_type" value="DONATION" checked class="hidden" onchange="switchFields('DONATION')">
+                    <div class="text-2xl mb-1">🎁</div>
+                    <div class="font-bold text-xs text-slate-800">Donation</div>
+                    <div class="text-[10px] text-slate-500">Free giveaway</div>
+                </label>
+                <label class="cursor-pointer border-2 rounded-2xl p-4 text-center transition-all hover:border-slate-300" id="label-RENTAL">
+                    <input type="radio" name="item_type" value="RENTAL" class="hidden" onchange="switchFields('RENTAL')">
+                    <div class="text-2xl mb-1">🔧</div>
+                    <div class="font-bold text-xs text-slate-800">Rental Item</div>
+                    <div class="text-[10px] text-slate-500">Tools / Gear</div>
+                </label>
+                <label class="cursor-pointer border-2 rounded-2xl p-4 text-center transition-all hover:border-slate-300" id="label-RECYCLABLE">
+                    <input type="radio" name="item_type" value="RECYCLABLE" class="hidden" onchange="switchFields('RECYCLABLE')">
+                    <div class="text-2xl mb-1">♻️</div>
+                    <div class="font-bold text-xs text-slate-800">Recyclable</div>
+                    <div class="text-[10px] text-slate-500">Campus scrap</div>
+                </label>
+            </div>
+        </div>
+
+        <!-- Provider / User Selection -->
+        <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Listing Owner (User)</label>
+            <select name="owner_id" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                {% for user in users %}
+                <option value="{{ user.user_id }}">{{ user.username }} ({{ user.role }}) — Score: {{ user.eco_score }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Common Fields (Item Base Class) -->
+        <div class="space-y-4">
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Title</label>
+                <input type="text" name="title" required placeholder="e.g. Scientific Calculator FX-991EX" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Category</label>
+                    <select name="category" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500">
+                        <option value="Electronics">Electronics</option>
+                        <option value="Books">Books / Notes</option>
+                        <option value="Tools">Tools & Equipment</option>
+                        <option value="Furniture">Furniture</option>
+                        <option value="Recyclables">Recyclable Waste</option>
+                        <option value="Household">Household</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Status</label>
+                    <input type="text" value="AVAILABLE" disabled class="w-full bg-slate-100 border border-slate-200 text-slate-500 rounded-xl px-4 py-2.5 text-sm">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Description</label>
+                <textarea name="description" rows="3" required placeholder="Describe condition, specifications, and pickup location..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+            </div>
+        </div>
+
+        <!-- Dynamic Fields: DonationItem -->
+        <div id="fields-DONATION" class="space-y-4 bg-emerald-50/50 p-4 rounded-2xl border border-emerald-100">
+            <h4 class="text-xs font-bold text-emerald-900 uppercase tracking-wider">DonationItem Attributes</h4>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Condition</label>
+                    <select name="condition" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-sm">
+                        <option value="Like New">Like New</option>
+                        <option value="Good" selected>Good</option>
+                        <option value="Fair">Fair</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Original Approx Value (₹)</label>
+                    <input type="number" step="10" name="estimated_market_value" value="500" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-sm">
+                </div>
+            </div>
+        </div>
+
+        <!-- Dynamic Fields: RentalItem -->
+        <div id="fields-RENTAL" class="space-y-4 bg-blue-50/50 p-4 rounded-2xl border border-blue-100 hidden">
+            <h4 class="text-xs font-bold text-blue-900 uppercase tracking-wider">RentalItem Attributes</h4>
+            <div class="grid grid-cols-3 gap-3">
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Fee (₹/day)</label>
+                    <input type="number" step="5" name="rental_fee_per_day" value="30" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Security Deposit (₹)</label>
+                    <input type="number" step="50" name="security_deposit" value="150" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Max Days</label>
+                    <input type="number" name="max_duration_days" value="7" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-sm">
+                </div>
+            </div>
+        </div>
+
+        <!-- Dynamic Fields: RecyclableWaste -->
+        <div id="fields-RECYCLABLE" class="space-y-4 bg-amber-50/50 p-4 rounded-2xl border border-amber-100 hidden">
+            <h4 class="text-xs font-bold text-amber-900 uppercase tracking-wider">RecyclableWaste Attributes</h4>
+            <div class="grid grid-cols-3 gap-3">
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Material Type</label>
+                    <select name="material_type" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-sm">
+                        <option value="Plastic">Plastic</option>
+                        <option value="Paper/Cardboard">Paper/Cardboard</option>
+                        <option value="Aluminium">Aluminium</option>
+                        <option value="E-Waste">E-Waste</option>
+                        <option value="Glass">Glass</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Weight (kg)</label>
+                    <input type="number" step="0.5" name="weight_kg" value="5.0" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Material Grade</label>
+                    <input type="text" name="material_grade" value="Clean / Sorted" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-sm">
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3.5 rounded-2xl shadow-md transition-all text-sm">
+            Publish Community Listing
+        </button>
+    </form>
+</div>
+
+<script>
+    function switchFields(type) {
+        ['DONATION', 'RENTAL', 'RECYCLABLE'].forEach(t => {
+            const field = document.getElementById(`fields-${t}`);
+            const label = document.getElementById(`label-${t}`);
+            if (t === type) {
+                field.classList.remove('hidden');
+                label.classList.add('border-brand-600', 'bg-brand-50');
+            } else {
+                field.classList.add('hidden');
+                label.classList.remove('border-brand-600', 'bg-brand-50');
+            }
+        });
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}EcoShare - OOP Architecture & Viva Defense Guide{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-8">
+    <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
+        <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">College Lab Viva & Defense</span>
+        <h1 class="text-3xl font-black text-slate-900 mt-1">EcoShare: OOP Design Patterns & Architecture</h1>
+        <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+            This reference document contains the full UML Class Diagram, OOP pillar breakdowns, and common viva questions prepared for your project defense.
+        </p>
+    </div>
+
+    <!-- The 4 OOP Pillars Card Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Encapsulation -->
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="flex items-center gap-3 mb-3">
+                <span class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 font-bold flex items-center justify-center text-sm">1</span>
+                <h3 class="text-base font-bold text-slate-900">Encapsulation</h3>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed mb-3">
+                <strong>Implementation:</strong> In <code class="bg-slate-100 px-1 py-0.5 rounded text-purple-700 font-semibold">User</code> and <code class="bg-slate-100 px-1 py-0.5 rounded text-purple-700 font-semibold">Item</code>, sensitive fields (e.g., <code class="text-slate-800 font-mono">_email</code>, <code class="text-slate-800 font-mono">_phone</code>, <code class="text-slate-800 font-mono">_eco_score</code>) are protected attributes.
+            </p>
+            <ul class="text-xs text-slate-500 list-disc list-inside space-y-1">
+                <li>Input validation inside <code class="font-mono">@email.setter</code> and <code class="font-mono">@phone.setter</code>.</li>
+                <li><code class="font-mono">get_masked_contact()</code> masks personal contact details.</li>
+                <li>Mutation of eco-points only occurs through controlled methods (<code class="font-mono">add_eco_score</code>).</li>
+            </ul>
+        </div>
+
+        <!-- Inheritance -->
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="flex items-center gap-3 mb-3">
+                <span class="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 font-bold flex items-center justify-center text-sm">2</span>
+                <h3 class="text-base font-bold text-slate-900">Inheritance</h3>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed mb-3">
+                <strong>Implementation:</strong> Base class <code class="bg-slate-100 px-1 py-0.5 rounded text-blue-700 font-semibold">Item</code> captures common metadata (id, title, category, owner, status).
+            </p>
+            <ul class="text-xs text-slate-500 list-disc list-inside space-y-1">
+                <li><code class="font-mono">DonationItem</code> adds condition & estimated market value.</li>
+                <li><code class="font-mono">RentalItem</code> adds rental fee per day, security deposit, and duration limit.</li>
+                <li><code class="font-mono">RecyclableWaste</code> adds material type, weight in kg, and material grade.</li>
+            </ul>
+        </div>
+
+        <!-- Polymorphism -->
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="flex items-center gap-3 mb-3">
+                <span class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center text-sm">3</span>
+                <h3 class="text-base font-bold text-slate-900">Polymorphism</h3>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed mb-3">
+                <strong>Implementation:</strong> The abstract method <code class="bg-slate-100 px-1 py-0.5 rounded text-emerald-700 font-semibold">calculate_environmental_impact()</code> is overridden differently in every subclass:
+            </p>
+            <ul class="text-xs text-slate-500 list-disc list-inside space-y-1">
+                <li><strong>Donation:</strong> Computes avoided manufacturing CO2e.</li>
+                <li><strong>Rental:</strong> Computes lifecycle extension offset.</li>
+                <li><strong>Recyclable:</strong> Computes direct landfill diversion based on mass and material indices.</li>
+            </ul>
+        </div>
+
+        <!-- Abstraction -->
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="flex items-center gap-3 mb-3">
+                <span class="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 font-bold flex items-center justify-center text-sm">4</span>
+                <h3 class="text-base font-bold text-slate-900">Abstraction</h3>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed mb-3">
+                <strong>Implementation:</strong> Abstract base classes using Python's <code class="bg-slate-100 px-1 py-0.5 rounded text-amber-700 font-semibold">abc.ABC</code>.
+            </p>
+            <ul class="text-xs text-slate-500 list-disc list-inside space-y-1">
+                <li><code class="font-mono">Transaction (ABC)</code> declares abstract <code class="font-mono">process_completion()</code>.</li>
+                <li><code class="font-mono">NotificationService (ABC)</code> decouples message dispatch from business transactions.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Design Patterns Used -->
+    <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-4">GoF Design Patterns Demonstrated</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                <div class="font-bold text-slate-800 text-sm mb-1">🏭 Factory Method Pattern</div>
+                <p class="text-slate-600"><code class="font-mono text-emerald-700">ItemFactory.create_item()</code> decouples client code from the specific constructors of <code class="font-mono">DonationItem</code>, <code class="font-mono">RentalItem</code>, and <code class="font-mono">RecyclableWaste</code>.</p>
+            </div>
+            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                <div class="font-bold text-slate-800 text-sm mb-1">🔒 Singleton Pattern</div>
+                <p class="text-slate-600"><code class="font-mono text-emerald-700">DatabaseManager</code> ensures a single coordinated connection pool to the SQLite persistence layer with lazy initialization.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Viva Q&A Guide -->
+    <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+        <h3 class="text-base font-bold text-slate-900 mb-2">Top Viva Questions & Answers</h3>
+        
+        <div class="border-b border-slate-100 pb-4">
+            <h4 class="text-xs font-bold text-slate-800">Q1: Why did you choose Python's <code class="font-mono">abc</code> module instead of standard inheritance?</h4>
+            <p class="text-xs text-slate-600 mt-1"><strong>Ans:</strong> The <code class="font-mono">abc</code> (Abstract Base Class) module prevents incomplete instantiation. If any subclass fails to implement <code class="font-mono">calculate_environmental_impact()</code>, Python raises a runtime <code class="font-mono">TypeError</code>, enforcing strict interface compliance.</p>
+        </div>
+
+        <div class="border-b border-slate-100 pb-4">
+            <h4 class="text-xs font-bold text-slate-800">Q2: How does this project map to UN Sustainable Development Goals (SDGs)?</h4>
+            <p class="text-xs text-slate-600 mt-1"><strong>Ans:</strong> It directly targets <strong>SDG 11 (Target 11.6: Municipal solid waste management)</strong> and <strong>SDG 12 (Target 12.5: Substantially reduce waste generation through prevention, reduction, recycling and reuse)</strong>.</p>
+        </div>
+
+        <div>
+            <h4 class="text-xs font-bold text-slate-800">Q3: How does the system handle loose coupling?</h4>
+            <p class="text-xs text-slate-600 mt-1"><strong>Ans:</strong> Through Dependency Injection and Abstraction: the <code class="font-mono">NotificationService</code> interface can be swapped from in-memory logging to SMTP Email or SMS dispatch without altering transaction handling code.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

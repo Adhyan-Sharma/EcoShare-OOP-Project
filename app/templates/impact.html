@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}EcoShare - SDG 11 & SDG 12 Environmental Impact{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <div>
+        <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">United Nations Sustainable Development Goals</span>
+        <h1 class="text-3xl font-black text-slate-900 mt-1">Environmental Impact & Carbon Offset Analytics</h1>
+        <p class="text-sm text-slate-600 mt-2 max-w-3xl leading-relaxed">
+            Every transaction on EcoShare directly quantifies avoided landfill deposition and reduced manufacturing greenhouse gas emissions, directly measuring progress for <strong>SDG 11 (Target 11.6)</strong> and <strong>SDG 12 (Target 12.5)</strong>.
+        </p>
+    </div>
+
+    <!-- Impact KPI Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center text-xl font-bold mb-4">💨</div>
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider">CO2 Emissions Avoided</div>
+            <div class="text-3xl font-black text-slate-900 mt-2">{{ stats.total_co2_saved_kg }} <span class="text-sm font-semibold text-emerald-600">kg CO2e</span></div>
+            <div class="text-[11px] text-slate-400 mt-2">Calculated polymorphically per category & mass</div>
+        </div>
+
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center text-xl font-bold mb-4">♻️</div>
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider">Solid Waste Diverted</div>
+            <div class="text-3xl font-black text-slate-900 mt-2">{{ stats.total_waste_diverted_kg }} <span class="text-sm font-semibold text-amber-600">kg</span></div>
+            <div class="text-[11px] text-slate-400 mt-2">Diverted from local municipal landfills</div>
+        </div>
+
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="w-10 h-10 rounded-2xl bg-green-100 text-green-800 flex items-center justify-center text-xl font-bold mb-4">🌳</div>
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider">Urban Trees Equivalent</div>
+            <div class="text-3xl font-black text-slate-900 mt-2">{{ stats.equivalent_trees_planted }} <span class="text-sm font-semibold text-green-600">trees/yr</span></div>
+            <div class="text-[11px] text-slate-400 mt-2">Annual CO2 absorption equivalent</div>
+        </div>
+
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="w-10 h-10 rounded-2xl bg-blue-100 text-blue-800 flex items-center justify-center text-xl font-bold mb-4">🚗</div>
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider">Combustion Driving Avoided</div>
+            <div class="text-3xl font-black text-slate-900 mt-2">{{ stats.car_km_avoided }} <span class="text-sm font-semibold text-blue-600">km</span></div>
+            <div class="text-[11px] text-slate-400 mt-2">Passenger car travel emissions offset</div>
+        </div>
+    </div>
+
+    <!-- Leaderboard & Category Breakdown -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- User Eco-Score Leaderboard (Encapsulation showcase) -->
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-slate-900 mb-4 flex items-center gap-2">
+                <span>🏆</span> Campus Community Eco-Score Leaderboard
+            </h3>
+            <div class="space-y-3">
+                {% for u in users %}
+                <div class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-xl bg-brand-100 text-brand-800 flex items-center justify-center font-bold text-xs">
+                            #{{ loop.index }}
+                        </div>
+                        <div>
+                            <div class="font-bold text-xs text-slate-900">{{ u.username }}</div>
+                            <div class="text-[11px] text-slate-500">{{ u.role }}</div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-black text-emerald-700 text-sm">{{ u.eco_score }} pts</div>
+                        <div class="text-[10px] text-slate-400">Masked Contact: {{ u.get_masked_contact() }}</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- SDG Breakdown Explanation -->
+        <div class="bg-gradient-to-br from-slate-900 to-emerald-950 text-white p-8 rounded-3xl shadow-sm flex flex-col justify-between">
+            <div>
+                <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Lab Evaluation Context</span>
+                <h3 class="text-xl font-bold mt-2 mb-4">How OOP Directly Enables Environmental Accounting</h3>
+                <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                    In traditional systems, environmental benefits are hardcoded or ignored. In EcoShare, <strong>Polymorphism</strong> allows each distinct resource type to calculate carbon offsets using its scientific domain logic:
+                </p>
+                <ul class="text-xs space-y-3 text-slate-300">
+                    <li class="flex items-start gap-2">
+                        <span class="text-emerald-400 font-bold">•</span>
+                        <span><strong>DonationItem:</strong> Quantifies avoided embodied carbon from new factory fabrication.</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-blue-400 font-bold">•</span>
+                        <span><strong>RentalItem:</strong> Quantifies lifecycle extension and product-service system efficiency.</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-amber-400 font-bold">•</span>
+                        <span><strong>RecyclableWaste:</strong> Quantifies landfill diversion through weight \(\times\) material circularity indices.</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="mt-6 pt-6 border-t border-slate-800 flex justify-between items-center text-xs text-slate-400">
+                <span>Aligned with UN SDGs</span>
+                <span class="text-emerald-400 font-bold">Goal 11.6 & Goal 12.5</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

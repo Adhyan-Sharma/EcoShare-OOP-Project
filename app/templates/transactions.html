@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}EcoShare - Exchange Transactions & State Transitions{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <span class="text-xs font-bold text-brand-600 uppercase tracking-wider">Transaction Management</span>
+            <h1 class="text-2xl font-black text-slate-900 mt-1">Active & Completed Exchanges</h1>
+            <p class="text-xs text-slate-500 mt-1">Illustrating <strong>Abstraction</strong> & <strong>Polymorphic Completion Logic</strong> across transaction states.</p>
+        </div>
+    </div>
+
+    <!-- Notification Feed Widget -->
+    {% if notifications %}
+    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-2">
+            <span>🔔</span> Real-Time Notification Stream (NotificationService Abstraction)
+        </h3>
+        <div class="space-y-2 max-h-36 overflow-y-auto pr-2">
+            {% for n in notifications %}
+            <div class="text-xs p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-4">
+                <div>
+                    <span class="font-bold text-slate-800">{{ n.recipient_name }}</span>: {{ n.message }}
+                </div>
+                <span class="text-[10px] text-slate-400 whitespace-nowrap">{{ n.timestamp }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Transactions Table -->
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase tracking-wider font-bold">
+                    <tr>
+                        <th class="px-6 py-4">ID & Type</th>
+                        <th class="px-6 py-4">Item Details</th>
+                        <th class="px-6 py-4">Provider (Owner)</th>
+                        <th class="px-6 py-4">Receiver</th>
+                        <th class="px-6 py-4">Status</th>
+                        <th class="px-6 py-4 text-right">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    {% for tx in transactions %}
+                    <tr class="hover:bg-slate-50/60 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="font-bold text-slate-900">#{{ tx.transaction_id }}</span>
+                            <span class="block text-[11px] font-semibold text-slate-500">{{ tx.get_transaction_type() }}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="font-bold text-slate-900">{{ tx.item.title }}</div>
+                            <div class="text-[11px] text-slate-500">{{ tx.item.category }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="font-semibold text-slate-800">{{ tx.provider.username }}</div>
+                            <div class="text-[11px] text-slate-400">{{ tx.provider.role }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="font-semibold text-slate-800">{{ tx.receiver.username }}</div>
+                            <div class="text-[11px] text-slate-400">{{ tx.receiver.role }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {% if tx.status == 'COMPLETED' %}
+                            <span class="px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">
+                                COMPLETED
+                            </span>
+                            {% elif tx.status == 'PENDING' %}
+                            <span class="px-3 py-1 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800">
+                                PENDING
+                            </span>
+                            {% else %}
+                            <span class="px-3 py-1 rounded-full text-[11px] font-bold bg-slate-100 text-slate-700">
+                                {{ tx.status }}
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 text-right whitespace-nowrap">
+                            {% if tx.status == 'PENDING' %}
+                            <form action="/complete-transaction/{{ tx.transaction_id }}" method="POST" class="inline">
+                                <button type="submit" class="bg-brand-600 hover:bg-brand-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-sm hover:shadow transition-all">
+                                    Finalize Handover & Award Points
+                                </button>
+                            </form>
+                            {% else %}
+                            <span class="text-xs text-slate-400 font-medium">Archived / Closed</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="px-6 py-12 text-center text-slate-400">
+                            No exchange transactions initiated yet. Browse items and click "Request Item".
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
